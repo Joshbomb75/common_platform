@@ -11,7 +11,6 @@ def generate_launch_description():
 
     package_name = 'common_platform'
 
-    # Robot state publisher — generates TF static frames from URDF
     rsp = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -24,21 +23,32 @@ def generate_launch_description():
                 ' use_ros2_control:=false sim_mode:=false'
             ]),
             'use_sim_time': False,
-            
         }]
     )
 
-    # twist_mux — velocity arbitration (nav > tracker > joystick)
     twist_mux_params = os.path.join(
         get_package_share_directory(package_name), 'config', 'twist_mux.yaml')
     twist_mux = Node(
         package='twist_mux',
         executable='twist_mux',
         parameters=[twist_mux_params],
-        remappings=[('/cmd_vel_out', '/rcr002/cmd_vel')]
+        remappings=[('/cmd_vel_out', '/rcr002/cmd_vel_mux')]
     )
 
-    # odom TF broadcaster — republishes micro-ROS odom as TF odom->base_link
+    vel_smoother_params = os.path.join(
+        get_package_share_directory(package_name), 'config', 'velocity_smoother.yaml')
+    vel_smoother = Node(
+        package='nav2_velocity_smoother',
+        executable='velocity_smoother',
+        name='velocity_smoother',
+        output='screen',
+        parameters=[vel_smoother_params],
+        remappings=[
+            ('cmd_vel', '/rcr002/cmd_vel_mux'),
+            ('cmd_vel_smoothed', '/rcr002/cmd_vel'),
+        ]
+    )
+
     odom_tf = Node(
         package='common_platform',
         executable='odom_tf_broadcaster',
@@ -53,6 +63,7 @@ def generate_launch_description():
                 PushRosNamespace(ns),
                 rsp,
                 twist_mux,
+                vel_smoother,
                 odom_tf,
             ])
         ])
@@ -60,5 +71,6 @@ def generate_launch_description():
         return LaunchDescription([
             rsp,
             twist_mux,
+            vel_smoother,
             odom_tf,
         ])
