@@ -5,6 +5,7 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node, PushRosNamespace
 
 def generate_launch_description():
+    ns_env = os.environ.get('ROS_NAMESPACE', '').strip('/')
     serial_port = LaunchConfiguration('serial_port')
     serial_baudrate = LaunchConfiguration('serial_baudrate')
     frame_id = LaunchConfiguration('frame_id')
@@ -21,7 +22,7 @@ def generate_launch_description():
 
     declare_frame_id = DeclareLaunchArgument(
         'frame_id',
-        default_value='laser_frame',
+        default_value=f'{ns_env}/laser_frame' if ns_env else 'laser_frame',
         description='Frame id for the laser scans')
 
     lidar_node = Node(

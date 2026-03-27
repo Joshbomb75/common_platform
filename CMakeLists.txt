@@ -37,4 +37,9 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(
+  PROGRAMS scripts/odom_tf_broadcaster
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()

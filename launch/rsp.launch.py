@@ -24,7 +24,7 @@ def generate_launch_description():
     
     # Create a robot_state_publisher node
     ns_env = os.environ.get('ROS_NAMESPACE', '').strip('/')
-    frame_prefix = f"/{ns_env}/" if ns_env else ''
+    frame_prefix = f"{ns_env}/" if ns_env else ''
     params = {
         'robot_description': robot_description_config,
         'use_sim_time': use_sim_time,
