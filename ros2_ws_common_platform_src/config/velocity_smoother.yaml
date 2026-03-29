@@ -1,0 +1,14 @@
+velocity_smoother:
+  ros__parameters:
+    use_lifecycle_manager: false
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.3, 0.0, 1.2]
+    min_velocity: [-0.3, 0.0, -1.2]
+    max_accel: [1.0, 0.0, 2.0]
+    max_decel: [-2.0, 0.0, -3.0]
+    odom_topic: "/rcr002/odom_uros"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0
